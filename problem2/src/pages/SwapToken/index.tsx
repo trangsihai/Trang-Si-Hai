@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from "react";
 import {
   Button,
@@ -126,25 +127,29 @@ const SwapToken = () => {
     }
   }, [messageApi, tokenFrom, tokenTo, valueFrom, valueTo]);
 
-  const handleReCalculate = useCallback((result: Token[]) => {
-    if (tokenFrom && tokenTo && (valueFrom !== null || valueTo !== null)) {
-      const tokenFromNew = result?.find(
-        (v) => v.currency === tokenFrom.currency
-      );
-      const tokenToNew = result?.find((v) => v.currency === tokenTo.currency);
-      const rate = exchangeRate(tokenFromNew?.price, tokenToNew?.price);
-      if (valueFrom !== null) {
-        setValueTo(valueFrom * rate);
-      } else if (valueTo !== null) {
-        setValueFrom(valueTo / rate);
+  const handleReCalculate = useCallback(
+    (result: Token[]) => {
+      if (tokenFrom && tokenTo && (valueFrom !== null || valueTo !== null)) {
+        const tokenFromNew = result?.find(
+          (v) => v.currency === tokenFrom.currency
+        );
+        const tokenToNew = result?.find((v) => v.currency === tokenTo.currency);
+        const rate = exchangeRate(tokenFromNew?.price, tokenToNew?.price);
+        if (valueFrom !== null) {
+          setValueTo(valueFrom * rate);
+        } else if (valueTo !== null) {
+          setValueFrom(valueTo / rate);
+        }
       }
-    }
-  }, [tokenFrom, tokenTo, valueFrom, valueTo]);
+    },
+    [tokenFrom, tokenTo, valueFrom, valueTo]
+  );
 
   const handleRefreshPriceToken = useCallback(async () => {
     try {
       const result = await get();
       handleReCalculate(result);
+
       messageApi.open({
         type: "success",
         content: "Refresh success",
@@ -166,7 +171,7 @@ const SwapToken = () => {
     }
 
     return () => clearInterval(interval);
-  }, [handleRefreshPriceToken, isAutoRefresh]);
+  }, [isAutoRefresh]);
 
   return (
     <>
